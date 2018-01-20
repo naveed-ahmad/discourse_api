@@ -90,7 +90,7 @@ module DiscourseApi
       end
 
       def suspend(user_id, days, reason)
-        put("/admin/users/#{user_id}/suspend", {duration: days, reason: reason})
+        put("/admin/users/#{user_id}/suspend", {suspend_until: (Date.today +  days.day).to_s, reason: reason})
       end
 
       def unsuspend(user_id)

@@ -1,5 +1,8 @@
 module DiscourseApi
-  class Error < StandardError
+  class DiscourseError < StandardError
+  end
+
+  class Error < DiscourseError
     attr_reader :wrapped_exception
 
     # Initializes a new Error object
@@ -12,6 +15,15 @@ module DiscourseApi
     end
   end
 
-  class UnauthenticatedError < StandardError
+  class UnauthenticatedError < DiscourseError
+  end
+
+  class NotFoundError < DiscourseError
+  end
+
+  class UnprocessableEntity < DiscourseError
+  end
+
+  class TooManyRequests < DiscourseError
   end
 end

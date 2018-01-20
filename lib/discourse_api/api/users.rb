@@ -2,7 +2,7 @@ module DiscourseApi
   module API
     module Users
       def activate(id)
-        put "/admin/users/#{id}/activate", api_key: api_key, api_username: api_username
+        put("/admin/users/#{id}/activate")
       end
 
       def deactivate(id)
@@ -18,8 +18,8 @@ module DiscourseApi
         response[:body]['user']
       end
 
-      def user_sso(username)
-        response = get("/admin/users/#{username.downcase}")
+      def user_sso(user_id)
+        response = get("/admin/users/#{user_id}.json")
         response[:body]['single_sign_on_record']
       end
 
@@ -56,7 +56,7 @@ module DiscourseApi
       def create_user(args)
         args = API.params(args)
                   .required(:name, :email, :password, :username)
-                  .optional(:active)
+                  .optional(:active, :staged)
                   .to_h
         post("/users", args)
       end
@@ -87,6 +87,14 @@ module DiscourseApi
       def by_external_id(external_id)
         response = get("/users/by-external/#{external_id}")
         response[:body]['user']
+      end
+
+      def suspend(user_id, days, reason)
+        put("/admin/users/#{user_id}/suspend", {duration: days, reason: reason})
+      end
+
+      def unsuspend(user_id)
+        put("/admin/users/#{user_id}/unsuspend")
       end
     end
   end

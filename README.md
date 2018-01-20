@@ -44,7 +44,7 @@ client.search("sandbox")                        #=> Gets a list of topics that m
 
 # Categories endpoint
 client.categories                               #=> Gets a list of categories
-client.category_latest_posts("category-slug")   #=> Gets a list of latest posts in a category
+client.category_latest_topics(category_slug: "lounge")  #=> Gets a list of latest topics in a category
 
 # SSO endpoint
 client.sync_sso(                                #=> Synchronizes the SSO record
@@ -54,6 +54,16 @@ client.sync_sso(                                #=> Synchronizes the SSO record
   email: "name@example.com",
   external_id: "2"
 )
+
+# Private messages
+client.private_messages("test_user")            #=> Gets a list of private messages received by "test_user"
+client.sent_private_messages("test_user")       #=> Gets a list of private messages sent by "test_user"
+client.create_private_message(                  #=> Creates a private messages by api_username user
+  title: "Confidential: Hello World!",
+  raw: "This is the raw markdown for my private message",
+  target_usernames: "user1,user2"
+)
+
 ```
 
 
@@ -70,4 +80,5 @@ client.sync_sso(                                #=> Synchronizes the SSO record
 1. Install discourse locally
 2. Inside of your discourse directory, run: `bundle exec rake db:api_test_seed`
 3. Start discourse: `bundle exec rails s`
-4. Inside of your discourse_api directory, run: `bundle exec rspec spec/`
+4. Install bundler in the discourse_api directory, run `gem install bundler`
+5. Inside of your discourse_api directory, run: `bundle exec rspec spec/`

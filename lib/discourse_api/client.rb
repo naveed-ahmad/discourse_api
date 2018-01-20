@@ -18,6 +18,7 @@ require 'discourse_api/api/email'
 require 'discourse_api/api/api_key'
 require 'discourse_api/api/backups'
 require 'discourse_api/api/dashboard'
+require 'discourse_api/api/uploads'
 
 module DiscourseApi
   class Client
@@ -40,6 +41,7 @@ module DiscourseApi
     include DiscourseApi::API::ApiKey
     include DiscourseApi::API::Backups
     include DiscourseApi::API::Dashboard
+    include DiscourseApi::API::Uploads
 
     def initialize(host, api_key = nil, api_username = nil)
       raise ArgumentError, 'host needs to be defined' if host.nil? || host.empty?
@@ -98,6 +100,8 @@ module DiscourseApi
       @connection ||= Faraday.new connection_options do |conn|
         # Follow redirects
         conn.use FaradayMiddleware::FollowRedirects, limit: 5
+        # Allow uploading of files
+        conn.request :multipart
         # Convert request params to "www-form-encoded"
         conn.request :url_encoded
         # Parse responses as JSON
@@ -127,6 +131,14 @@ module DiscourseApi
       case response.status
       when 403
         raise DiscourseApi::UnauthenticatedError.new(response.env[:body])
+      when 404, 410
+        raise DiscourseApi::NotFoundError.new(response.env[:body])
+      when 422
+        raise DiscourseApi::UnprocessableEntity.new(response.env[:body])
+      when 429
+        raise DiscourseApi::TooManyRequests.new(response.env[:body])
+      when 500...600
+        raise DiscourseApi::Error.new(response.env[:body])
       end
     end
   end

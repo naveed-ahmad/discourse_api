@@ -24,6 +24,23 @@ describe DiscourseApi::API::Users do
     end
   end
 
+  describe "#user_sso" do
+    before do
+      stub_get("http://localhost:3000/admin/users/15.json?api_key=test_d7fd0429940&api_username=test_user").to_return(body: fixture("admin_user.json"), headers: { content_type: "application/json" })
+    end
+
+    it "requests the correct resource" do
+      subject.user_sso(15)
+      expect(a_get("http://localhost:3000/admin/users/15.json?api_key=test_d7fd0429940&api_username=test_user")).to have_been_made
+    end
+
+    it "has single_sign_on_record" do
+      user_sso = subject.user_sso(15)
+      expect(user_sso).to be_a Hash
+      expect(user_sso).to have_key("external_id")
+    end
+  end
+
   describe "#update_avatar" do
     before do
       stub_post("http://localhost:3000/uploads?api_key=test_d7fd0429940&api_username=test_user").to_return(body: fixture("upload_avatar.json"), headers: { content_type: "application/json" })
@@ -146,7 +163,7 @@ describe DiscourseApi::API::Users do
     end
 
     it "Raises API Error" do
-      expect{subject.log_out(90)}.to raise_error DiscourseApi::Error
+      expect{subject.log_out(90)}.to raise_error DiscourseApi::NotFoundError
     end
   end
 
@@ -197,7 +214,7 @@ describe DiscourseApi::API::Users do
     end
 
     it "makes the correct put request" do
-      result = subject.grant_admin(11)
+      subject.grant_admin(11)
       url = "http://localhost:3000/admin/users/11/grant_admin?api_key=test_d7fd0429940&api_username=test_user"
       expect(a_put(url)).to have_been_made
     end
@@ -222,6 +239,34 @@ describe DiscourseApi::API::Users do
     it "returns the requested user" do
       user = subject.by_external_id(1)
       expect(user['id']).to eq 1
+    end
+  end
+
+  describe "#suspend" do
+    before do
+      url = "http://localhost:3000/admin/users/11/suspend?api_key=test_d7fd0429940&api_username=test_user"
+      stub_put(url).to_return(body: '', status: 200)
+    end
+
+    it "makes the correct put request" do
+      result = subject.suspend(11, 1, "no reason")
+      url = "http://localhost:3000/admin/users/11/suspend?api_key=test_d7fd0429940&api_username=test_user"
+      expect(a_put(url)).to have_been_made
+      expect(result.status).to eq(200)
+    end
+  end
+
+  describe "#unsuspend" do
+    before do
+      url = "http://localhost:3000/admin/users/11/unsuspend?api_key=test_d7fd0429940&api_username=test_user"
+      stub_put(url).to_return(body: '', status: 200)
+    end
+
+    it "makes the correct put request" do
+      result = subject.unsuspend(11)
+      url = "http://localhost:3000/admin/users/11/unsuspend?api_key=test_d7fd0429940&api_username=test_user"
+      expect(a_put(url)).to have_been_made
+      expect(result.status).to eq(200)
     end
   end
 end

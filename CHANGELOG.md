@@ -1,6 +1,70 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/). 
+This project adheres to [Semantic Versioning](http://semver.org/).
+
+## [0.20.0] - 2017-12-13
+### Added
+- Add base error class
+### Fixed
+- Update SSO
+
+## [0.19.0] - 2017-11-22
+### Added
+- Added optional `create_post` params
+
+## [0.18.0] - 2017-10-17
+### Added
+- Added update_group API call
+### Fixed
+- Fixed params for create groups endpoint
+- Fixed invite token API endpoint
+
+## [0.17.0] - 2017-06-29
+### Added
+- Add title to SSO sync
+
+## [0.16.1] - 2017-06-23
+### Fixed
+- `user_sso` should use `user_id` instead of `username`
+- `upload_file` should also include optional `user_id` param
+
+## [0.16.0] - 2017-05-14
+### Added
+- added `upload_file`
+### Removed
+- removed `upload_post_image`
+
+## [0.15.0] - 2017-04-12
+### Added
+- added the ability to create private messages
+
+## [0.14.1] - 2016-12-20
+### Fixed
+- allow for rack 2.0+ versions so that it doesn't clash with rails.
+
+## [0.14.0] - 2016-10-30
+### Added
+- improved error responses by adding `NotFoundError`, `UnprocessableEntity`, and `TooManyRequests`
+- added `delete_post` method
+
+## [0.13.0] - 2016-10-09
+### Added
+- added `update_category`
+- added `upload_post_image`
+
+## [0.12.0] - 2016-10-06
+### Added
+- add endpoint for `/admin/users/{id}/suspend`
+- add endpoint for `/admin/users/{id}/unsuspend`
+
+## [0.11.0] - 2016-09-03
+### Fixed
+- add destination folder to backup download
+- `post_action_users`
+
+### Added
+- `change_topic_status`
+- set username of topic on creation
 
 ## [0.10.1] - 2016-05-04
 ### Fixed

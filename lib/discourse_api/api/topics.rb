@@ -8,7 +8,7 @@ module DiscourseApi
       def create_topic(args={})
         args = API.params(args)
                   .required(:title, :raw)
-                  .optional(:skip_validations, :category, :auto_track, :created_at)
+                  .optional(:skip_validations, :category, :auto_track, :created_at, :api_username)
         post("/posts", args.to_h)
       end
 
@@ -41,6 +41,13 @@ module DiscourseApi
         put("/t/#{topic_id}.json", { topic_id: topic_id, category_id: category_id })
       end
 
+      def change_topic_status(topic_slug, topic_id, params={})
+        params = API.params(params)
+                     .required(:status, :enabled)
+                     .optional(:api_username)
+        put("/t/#{topic_slug}/#{topic_id}/status", params.to_h)
+      end
+
       def topic(id, params={})
         response = get("/t/#{id}.json", params)
         response[:body]
@@ -61,9 +68,9 @@ module DiscourseApi
           url << '?'
           post_ids.each do |id|
             url << "post_ids[]=#{id}&"
-          end 
+          end
         end
-        response = get(url) 
+        response = get(url)
         response[:body]
       end
     end

@@ -5,13 +5,9 @@ client = DiscourseApi::Client.new("http://localhost:3000")
 client.api_key = "YOUR_API_KEY"
 client.api_username = "YOUR_USERNAME"
 
-# create user
-user = client.create_user(
-  name: "Bruce Wayne",
-  email: "bruce@wayne.com",
-  username: "batman",
-  password: "WhySoSerious"
-)
+# Upload a file
+file = Faraday::UploadIO.new('grumpy_cat.pdf', "application/pdf")
+client.upload_file(file: file)
 
-# activate user
-client.activate(user["user_id"])
+# Upload a file via URL
+client.upload_file(url: 'https://giphy.com/grumpy_cat.gif')

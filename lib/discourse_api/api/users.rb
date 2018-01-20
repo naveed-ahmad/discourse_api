@@ -6,11 +6,11 @@ module DiscourseApi
       end
 
       def deactivate(id)
-        put "/admin/users/#{id}/deactivate", api_key: api_key, api_username: api_username
+        put("/admin/users/#{id}/deactivate")
       end
 
       def anonymize(id)
-        put "/admin/users/#{id}/anonymize", api_key: api_key, api_username: api_username
+        put("/admin/users/#{id}/anonymize")
       end
 
       def user(username, params={})

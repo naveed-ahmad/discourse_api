@@ -1,6 +1,7 @@
 require 'faraday'
 require 'faraday_middleware'
 require 'json'
+require 'uri'
 require 'discourse_api/version'
 require 'discourse_api/api/categories'
 require 'discourse_api/api/search'
@@ -19,11 +20,13 @@ require 'discourse_api/api/api_key'
 require 'discourse_api/api/backups'
 require 'discourse_api/api/dashboard'
 require 'discourse_api/api/uploads'
+require 'discourse_api/api/user_actions'
+require 'discourse_api/api/site_settings'
 
 module DiscourseApi
   class Client
-    attr_accessor :api_key, :api_username
-    attr_reader :host
+    attr_accessor :api_key
+    attr_reader :host, :api_username
 
     include DiscourseApi::API::Categories
     include DiscourseApi::API::Search
@@ -42,12 +45,20 @@ module DiscourseApi
     include DiscourseApi::API::Backups
     include DiscourseApi::API::Dashboard
     include DiscourseApi::API::Uploads
+    include DiscourseApi::API::UserActions
+    include DiscourseApi::API::SiteSettings
 
     def initialize(host, api_key = nil, api_username = nil)
       raise ArgumentError, 'host needs to be defined' if host.nil? || host.empty?
       @host         = host
       @api_key      = api_key
       @api_username = api_username
+      @use_relative = check_subdirectory(host)
+    end
+
+    def api_username=(api_username)
+      @api_username = api_username
+      @connection.params['api_username'] = api_username unless @connection.nil?
     end
 
     def connection_options
@@ -75,7 +86,7 @@ module DiscourseApi
     def post(path, params={})
       response = request(:post, path, params)
       case response.status
-      when 200
+      when 200, 201, 204
         response.body
       else
         raise DiscourseApi::Error, response.body
@@ -120,6 +131,7 @@ module DiscourseApi
       unless Hash === params
         params = params.to_h if params.respond_to? :to_h
       end
+      path = @use_relative ? path.sub(/^\//, '') : path
       response = connection.send(method.to_sym, path, params)
       handle_error(response)
       response.env
@@ -130,16 +142,20 @@ module DiscourseApi
     def handle_error(response)
       case response.status
       when 403
-        raise DiscourseApi::UnauthenticatedError.new(response.env[:body])
+        raise DiscourseApi::UnauthenticatedError.new(response.env[:body], response.env)
       when 404, 410
-        raise DiscourseApi::NotFoundError.new(response.env[:body])
+        raise DiscourseApi::NotFoundError.new(response.env[:body], response.env)
       when 422
-        raise DiscourseApi::UnprocessableEntity.new(response.env[:body])
+        raise DiscourseApi::UnprocessableEntity.new(response.env[:body], response.env)
       when 429
-        raise DiscourseApi::TooManyRequests.new(response.env[:body])
+        raise DiscourseApi::TooManyRequests.new(response.env[:body], response.env)
       when 500...600
         raise DiscourseApi::Error.new(response.env[:body])
       end
+    end
+
+    def check_subdirectory(host)
+      URI(host).request_uri != '/'
     end
   end
 end

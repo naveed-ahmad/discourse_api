@@ -54,11 +54,11 @@ module DiscourseApi
                             :owner_usernames,
                             :membership_request_template)
                   .to_h
-        put("/admin/groups/#{group_id}", group: args)
+        put("/groups/#{group_id}", group: args)
       end
 
       def groups
-        response = get("/admin/groups.json")
+        response = get("/groups.json")
         response.body
       end
 
@@ -84,8 +84,21 @@ module DiscourseApi
         put("/admin/groups/#{group_id}/members.json", users)
       end
 
-      def group_remove(group_id, user)
-        delete("/admin/groups/#{group_id}/members.json", user)
+      def group_remove(group_id, users)
+        users.keys.each do |key|
+          # Accept arrays and convert to comma-delimited string.
+          if users[key].respond_to? :join
+            users[key] = users[key].join(",")
+          end
+
+          # Accept non-plural user_id or username, but send pluralized version in the request.
+          if key.to_s[-1] != 's'
+            users["#{key}s"] = users[key]
+            users.delete(key)
+          end
+        end
+
+        delete("/admin/groups/#{group_id}/members.json", users)
       end
 
       def delete_group(group_id)

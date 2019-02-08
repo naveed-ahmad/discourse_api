@@ -2,6 +2,65 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.31.0] - 2019-02-07
+### Added
+- Added `deactivate` method
+- Added 201 and 204 as valid POST responses
+
+## [0.30.0] - 2018-12-19
+### Added
+- Add params hash to `list_users`
+
+## [0.29.0] - 2018-12-07
+### Added
+- Add `add_groups` and `remove_groups` to `sync_sso`
+
+## [0.28.2] - 2018-11-26
+### Fixed
+- Updated arguments for suspending a user
+
+## [0.28.1] - 2018-10-26
+### Fixed
+- Fixed non-URI chars in `check_username` method
+
+## [0.28.0] - 2018-10-23
+### Added
+- Added `check_username` method
+
+## [0.27.0] - 2018-09-14
+### Added
+- Added `site_settings_update` method
+
+## [0.26.0] - 2018-09-10
+### Added
+- Added user `user_actions` endpoint so you can retrieve `user_replies` and
+  `user_topics_and_replies`
+
+## [0.25.0] - 2018-08-15
+### Added
+- Added ability to rescue certain error classes and inspect the response object
+
+## [0.24.0] - 2018-05-30
+### Added
+- Added support for custom `user_fields` when creating a user
+
+## [0.23.1] - 2018-05-24
+### Fixed
+- Can now change `api_username` without creating a new client
+
+## [0.23.0] - 2018-05-24
+### Added
+- Added `delete_user` method
+
+## [0.22.0] - 2018-05-04
+### Added
+- Support for subfolder paths
+
+## [0.21.0] - 2018-04-23
+### Fixed
+- Update GET groups api route
+- Update PUT groups api route
+
 ## [0.20.0] - 2017-12-13
 ### Added
 - Add base error class
@@ -14,7 +73,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.18.0] - 2017-10-17
 ### Added
-- Added update_group API call
+- Added `update_group` API call
 ### Fixed
 - Fixed params for create groups endpoint
 - Fixed invite token API endpoint

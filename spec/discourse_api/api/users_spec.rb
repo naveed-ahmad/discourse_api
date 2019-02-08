@@ -249,7 +249,7 @@ describe DiscourseApi::API::Users do
     end
 
     it "makes the correct put request" do
-      result = subject.suspend(11, 1, "no reason")
+      result = subject.suspend(11, '2030-01-01', "no reason")
       url = "http://localhost:3000/admin/users/11/suspend?api_key=test_d7fd0429940&api_username=test_user"
       expect(a_put(url)).to have_been_made
       expect(result.status).to eq(200)
@@ -267,6 +267,71 @@ describe DiscourseApi::API::Users do
       url = "http://localhost:3000/admin/users/11/unsuspend?api_key=test_d7fd0429940&api_username=test_user"
       expect(a_put(url)).to have_been_made
       expect(result.status).to eq(200)
+    end
+  end
+
+  describe "#delete_user" do
+    before do
+      url = "http://localhost:3000/admin/users/11.json?delete_posts=true&api_key=test_d7fd0429940&api_username=test_user"
+      stub_delete(url).to_return(body: '{"deleted": true}', status: 200)
+    end
+
+    it "makes the correct delete request" do
+      result = subject.delete_user(11, true)
+      url = "http://localhost:3000/admin/users/11.json?delete_posts=true&api_key=test_d7fd0429940&api_username=test_user"
+      expect(a_delete(url)).to have_been_made
+      expect(result.body).to eq('{"deleted": true}')
+      expect(result.status).to eq(200)
+    end
+  end
+
+  describe "#check_username" do
+    let(:url) { "http://localhost:3000/users/check_username.json?username=sparrow&api_key=test_d7fd0429940&api_username=test_user" }
+    let(:body) { '{"available":false,"suggestion":"sparrow1"}' }
+
+    before do
+      stub_get(url).to_return(body: body, headers: { content_type: "application/json" })
+    end
+
+    it "requests the correct resource" do
+      subject.check_username("sparrow")
+      expect(a_get(url)).to have_been_made
+    end
+
+    it "returns the result" do
+      result = subject.check_username("sparrow")
+      expect(result['available']).to eq false
+    end
+
+    context "when non-URI characters are used" do
+      let(:url) { "http://localhost:3000/users/check_username.json?username=1_%5B4%5D%21+%40the%24%23%3F&api_key=test_d7fd0429940&api_username=test_user" }
+      let(:body) { '{"errors":["must only include numbers, letters, dashes, and underscores"]}' }
+
+      it "escapes them" do
+        subject.check_username("1_[4]! @the$#?")
+        expect(a_get(url)).to have_been_made
+      end
+
+      it "returns the result" do
+        result = subject.check_username("1_[4]! @the$#?")
+        expect(result['errors'].first).to eq "must only include numbers, letters, dashes, and underscores"
+      end
+    end
+  end
+
+  describe "#deactivate" do
+    before do
+      stub_put("http://localhost:3000/admin/users/15/deactivate?api_key=test_d7fd0429940&api_username=test_user").to_return(body: nil)
+    end
+
+    it "makes the put request" do
+      subject.deactivate(15)
+      expect(a_put("http://localhost:3000/admin/users/15/deactivate?api_key=test_d7fd0429940&api_username=test_user")).to have_been_made
+    end
+
+    it "returns success" do
+      response = subject.deactivate(15)
+      expect(response.status).to eq(200)
     end
   end
 end

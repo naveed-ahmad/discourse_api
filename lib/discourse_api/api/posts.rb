@@ -2,9 +2,16 @@ module DiscourseApi
   module API
     module Posts
       def create_post(args)
-        args = API.params(args)
+          args = API.params(args)
                   .required(:topic_id, :raw)
-                  .optional(:created_at, :api_username)
+                  .optional(
+                    :created_at, 
+                    :api_username, 
+                    :category, 
+                    :reply_to_post_number, 
+                    :import_mode
+                  )
+
         post("/posts", args)
       end
 

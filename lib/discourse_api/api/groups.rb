@@ -1,11 +1,12 @@
+# frozen_string_literal: true
 module DiscourseApi
   module API
     module Groups
       def create_group(args)
         args = API.params(args)
-                  .required(:name)
-                  .default(visibility_level: 0)
-                  .optional(:mentionable_level,
+          .required(:name)
+          .default(visibility_level: 0)
+          .optional(:mentionable_level,
                             :messageable_level,
                             :automatic_membership_email_domains,
                             :automatic_membership_retroactive,
@@ -25,14 +26,14 @@ module DiscourseApi
                             :usernames,
                             :owner_usernames,
                             :membership_request_template)
-                  .to_h
+          .to_h
         post("/admin/groups", group: args)
       end
 
       def update_group(group_id, args)
         args = API.params(args)
-                  .default(visibility_level: 0)
-                  .optional(:mentionable_level,
+          .default(visibility_level: 0)
+          .optional(:mentionable_level,
                             :messageable_level,
                             :name,
                             :automatic_membership_email_domains,
@@ -53,7 +54,7 @@ module DiscourseApi
                             :usernames,
                             :owner_usernames,
                             :membership_request_template)
-                  .to_h
+          .to_h
         put("/groups/#{group_id}", group: args)
       end
 
@@ -106,12 +107,22 @@ module DiscourseApi
       end
 
       def group_members(group_name, params = {})
+        options = params
         params = API.params(params)
-                 .optional(:offset, :limit)
-                 .default(offset: 0, limit: 100)
-                 .to_h
+          .optional(:offset, :limit)
+          .default(offset: 0, limit: 100)
+          .to_h
         response = get("/groups/#{group_name}/members.json", params)
-        response.body['members']
+
+        if options[:all] == true
+          response.body
+        else
+          response.body['members']
+        end
+      end
+
+      def group_set_user_notification_level(group, user_id, notification_level)
+        post("/groups/#{group}/notifications?user_id=#{user_id}&notification_level=#{notification_level}")
       end
     end
   end

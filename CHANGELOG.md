@@ -2,6 +2,50 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.38.0] - 2019-10-18
+### Added
+- Allow setting locale in SingleSignOn
+- Optional param to group memebrs to include owners as well as members
+
+## [0.37.0] - 2019-09-23
+### Added
+- user-badges endpoint for full badges list
+- expanded list of allowed messages
+- grant/revoke moderation
+
+## [0.36.0] - 2019-07-18
+### Added
+- Added poll methods
+### Fixed
+- Updated create topic example
+- Fixed capialization for header auth keys
+
+## [0.35.0] - 2019-05-15
+### Added
+- Added `custom_fields` param to create/update category
+- Added `frozen_string_literal: true` to all the files
+- Added rubocop and all the changes that went along with it
+### Fixed
+- Allow `api_username` to be changed for an initialized client
+- Update many of the `/users` routes to use the `/u` route
+### Changed
+- Changed `update_trust_level` to follow consistent method param syntax where
+  you specify the id first followed by params
+
+## [0.34.0] - 2019-04-02
+### Added
+- Header based authentication
+### Removed
+- Query param based authentication
+
+## [0.33.0] - 2019-03-04
+### Added
+- Added a new method to update a users notification level in a category
+
+## [0.32.0] - 2019-02-13
+### Added
+- Added a new method to update a users notification level in a group
+
 ## [0.31.0] - 2019-02-07
 ### Added
 - Added `deactivate` method

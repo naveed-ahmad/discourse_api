@@ -1,14 +1,12 @@
+# frozen_string_literal: true
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require File.expand_path('../../lib/discourse_api', __FILE__)
 
-# client = DiscourseApi::Client.new("http://localhost:3000")
-# client.api_key = "YOUR_API_KEY"
-# client.api_username = "YOUR_USERNAME"
-#
+config = DiscourseApi::ExampleHelper.load_yml
 
-client = DiscourseApi::Client.new("http://localhost:8080")
-client.api_key = "a56a349e1870529d8d8da11453ea782ce8ab8de34d6564a65727171163be4338"
-client.api_username = "system"
+client = DiscourseApi::Client.new(config['host'] || 'http://localhost:3000')
+client.api_key = config['api_key'] || "YOUR_API_KEY"
+client.api_username = config['api_username'] || "YOUR_USERNAME"
 
 ###
 # Required category params:
@@ -17,7 +15,6 @@ client.api_username = "system"
 #   :slug, :permissions, :auto_close_hours, :auto_close_based_on_last_post, :position, :email_in,
 #   :email_in_allow_strangers, :logo_url, :background_url, :allow_badges, :topic_template
 ###
-
 
 # Create category
 new_category = client.create_category(

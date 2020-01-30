@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module DiscourseApi
   module API
     def self.params(args)
@@ -15,6 +16,9 @@ module DiscourseApi
 
       def required(*keys)
         @required.concat(keys)
+        @required.each do |k|
+          raise ArgumentError.new("#{k} is required but not specified") unless @args.key?(k)
+        end
         self
       end
 
@@ -24,7 +28,7 @@ module DiscourseApi
       end
 
       def default(args)
-        args.each do |k,v|
+        args.each do |k, v|
           @defaults[k] = v
         end
         self
@@ -35,14 +39,13 @@ module DiscourseApi
 
         @required.each do |k|
           h[k] = @args[k]
-          raise ArgumentError.new("#{k} is required but not specified") unless h[k]
         end
 
         @optional.each do |k|
           h[k] = @args[k] if @args.include?(k)
         end
 
-        @defaults.each do |k,v|
+        @defaults.each do |k, v|
           @args.key?(k) ? h[k] = @args[k] : h[k] = v
         end
 
